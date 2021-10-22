@@ -1,0 +1,11 @@
+Model Information:
+* title:	Lamborghini Gallardo Low Poly
+* source:	https://sketchfab.com/3d-models/lamborghini-gallardo-low-poly-463f8eb77d8046678782783bd754b4d2
+* author:	Iron Minecart2 (https://sketchfab.com/iron_minecart2)
+
+Model License:
+* license type:	CC-BY-ND-4.0 (http://creativecommons.org/licenses/by-nd/4.0/)
+* requirements:	Author must be credited. Modified versions can not be distributed. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Lamborghini Gallardo Low Poly" (https://sketchfab.com/3d-models/lamborghini-gallardo-low-poly-463f8eb77d8046678782783bd754b4d2) by Iron Minecart2 (https://sketchfab.com/iron_minecart2) licensed under CC-BY-ND-4.0 (http://creativecommons.org/licenses/by-nd/4.0/)

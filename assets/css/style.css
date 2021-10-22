@@ -1,0 +1,16 @@
+.three-dimention-mode {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: transparent;
+    border-radius: 10px;
+    text-decoration: none;
+    display: block;
+    width: 40px;
+}
+
+.three-dimention-mode img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}

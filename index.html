@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8; X-Content-Type-Options=nosniff" http-equiv="Content-Type" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Симулятор дорожнього руху</title>
+  <link type="text/css" href="assets/bootstrap.min.css" rel="stylesheet"/>
+  <script src="assets/jquery.min.js"></script>
+  <script src="assets/bootstrap.min.js"></script>
+  <script src="assets/svg.min.js"></script>
+  <script src="assets/svg.draggable.min.js"></script>
+  <script src="assets/utils.js"></script>
+  <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+<body>
+  <a href="#" class="three-dimention-mode"><img src="./assets/img/three-d-mode.png" alt="3d mode"></a>
+  <input id="file" type="file" accept='application/JSON' style="display: none;"/>
+  <a id="save" href="#" download="map.json" target="_blank" style="display: none;"></a>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Мапа
+        </a>
+        <div class="dropdown-menu">
+          <a id="open-file" class="dropdown-item" href="#">Відкрити</a>
+          <a id="save-file" class="dropdown-item" href="#">Зберегти</a>
+          <div class="dropdown-divider"></div>
+          <a id="clear" class="dropdown-item" href="#">Очистити</a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a id="cursor" class="nav-link" href="#">Курсор</a>
+      </li>
+      <li class="nav-item">
+        <a id="node" class="nav-link" href="#">Вузол</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Автомобілі <span id="car-count" class="badge badge-primary">0</span>
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#" data-toggle="modal" data-target="#car-form">Додати</a>
+          <a id="car-generate" class="dropdown-item" href="#">Згенерувати</a>
+          <a id="car-list-show" class="dropdown-item" href="#">Список</a>
+          <a id="car-list-clear" class="dropdown-item" href="#">Очистити</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Симуляція
+        </a>
+        <div class="dropdown-menu">
+          <a id="start" class="dropdown-item" href="#">Старт</a>
+          <a id="stop" class="dropdown-item" href="#">Стоп</a>
+          <a id="restore" class="dropdown-item" href="#">Продовжити</a>
+          <a id="change-speed" class="dropdown-item" href="#">Швидкість</a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a href="documentation.pdf" target="_blank" class="nav-link">Документація</a>
+      </li>
+    </ul>
+    <div class="navbar-text">Час: <strong><span id="time">0</span> c.</strong> Швидкіть: <strong id="speed">1</strong></div>
+  </nav>
+
+  <div id="container"></div>
+
+  <div class="modal fade" id="car-form" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Автомобіль</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group row">
+            <label for="car-route" class="col-sm-2 col-form-label">Маршрут</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="car-route">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="car-speed" class="col-sm-2 col-form-label">Швидкість</label>
+            <div class="col-sm-4">
+              <input type="number" class="form-control" id="car-speed" min="30" max="90" value="50">
+            </div>
+            <label for="car-delay" class="col-sm-2 col-form-label">Затримка</label>
+            <div class="col-sm-4">
+              <input type="number" class="form-control" id="car-delay" min="0" value="0">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Скасувати</button>
+          <button type="button" class="btn btn-primary" id="car-form-submit">Зберегти</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="car-list" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Автомобілі</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div style="height: 400px; overflow: auto;">
+            <table class="table table-bordered table-hover table-sm ">
+              <thead>
+                <tr>
+                  <th>Маршрут</th>
+                  <th>Швидкість</th>
+                  <th>Затримка</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="node-form" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Вузол</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Скасувати</button>
+          <button type="button" class="btn btn-primary" id="node-form-submit">Зберегти</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="link-form" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Дорога</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group row">
+            <label for="link-type" class="col-sm-4 col-form-label">Тип</label>
+            <div class="col-sm-8">
+              <select type="text" class="form-control" id="link-type">
+                <option value="asphalt">Асфальтована</option>
+                <option value="dirt">Грунтова</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="car-route" class="col-sm-4 col-form-label">Макс. швидкість</label>
+            <div class="col-sm-8">
+              <input type="number" class="form-control" id="link-max-speed" value="100">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Скасувати</button>
+          <button type="button" class="btn btn-primary" id="link-form-submit">Зберегти</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="toasts" style="position: absolute; top: 60px; right: 0;"></div>
+  <script src="./assets/init.js" type="module"></script>
+</body>
+</html>
